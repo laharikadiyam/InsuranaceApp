@@ -1,0 +1,120 @@
+<div class="container-fluid register-container">
+  <div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg">
+        <div class="card-header bg-success text-white text-center">
+          <h3 class="mb-0">Create Account</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Role Selection -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Register as:</label>
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" name="role" id="customer" 
+                     [checked]="selectedRole === getRoles().CUSTOMER"
+                     (change)="onRoleChange(getRoles().CUSTOMER)">
+              <label class="btn btn-outline-success" for="customer">Customer</label>
+              
+              <input type="radio" class="btn-check" name="role" id="admin" 
+                     [checked]="selectedRole === getRoles().ADMIN"
+                     (change)="onRoleChange(getRoles().ADMIN)">
+              <label class="btn btn-outline-success" for="admin">Admin</label>
+            </div>
+          </div>
+
+          <!-- Success Message -->
+          <div *ngIf="successMessage" class="alert alert-success" role="alert">
+            {{ successMessage }}
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+          </div>
+
+          <!-- Registration Form -->
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" 
+                       formControlName="name"
+                       [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+                <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" 
+                     class="invalid-feedback">
+                  <div *ngIf="registerForm.get('name')?.errors?.['required']">Name is required</div>
+                  <div *ngIf="registerForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" 
+                       formControlName="email"
+                       [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" 
+                     class="invalid-feedback">
+                  <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</div>
+                  <div *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" 
+                       formControlName="password"
+                       [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" 
+                     class="invalid-feedback">
+                  <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+                  <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" 
+                       formControlName="confirmPassword"
+                       [class.is-invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+                <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" 
+                     class="invalid-feedback">
+                  <div *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirm password is required</div>
+                  <div *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="panNumber" class="form-label">PAN Number</label>
+              <input type="text" class="form-control" id="panNumber" 
+                     formControlName="panNumber" 
+                     placeholder="ABCDE1234F"
+                     [class.is-invalid]="registerForm.get('panNumber')?.invalid && registerForm.get('panNumber')?.touched">
+              <div *ngIf="registerForm.get('panNumber')?.invalid && registerForm.get('panNumber')?.touched" 
+                   class="invalid-feedback">
+                <div *ngIf="registerForm.get('panNumber')?.errors?.['required']">PAN Number is required</div>
+                <div *ngIf="registerForm.get('panNumber')?.errors?.['pattern']">Please enter a valid PAN Number (e.g., ABCDE1234F)</div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-success" 
+                      [disabled]="registerForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+              </button>
+            </div>
+          </form>
+
+          <!-- Link to Login -->
+          <div class="mt-3 text-center">
+            <span class="text-muted">Already have an account? </span>
+            <a routerLink="/login" class="text-decoration-none">Login here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="claim-management">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-clipboard-list me-2"></i>Claim Management
+      </h6>
+      <button class="btn btn-primary btn-sm" (click)="showNewClaimForm()" [disabled]="isLoading || !hasActivePolicies()">
+        <i class="fas fa-plus"></i> New Claim
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <!-- No Active Policies Message -->
+  <div *ngIf="!hasActivePolicies() && !isLoading" class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <strong>No Active Policies Available for Claims</strong>
+    <p class="mb-0 mt-2">You can only submit claims for active (confirmed) policies. Cancelled or expired policies are not eligible for claims.</p>
+  </div>
+
+  <!-- New Claim Form -->
+  <div *ngIf="showClaimForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Submit New Claim</h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="claimForm" (ngSubmit)="submitClaim()">
+        <div class="mb-3">
+          <label for="purchaseId" class="form-label">Select Active Policy</label>
+          <select class="form-select" id="purchaseId" formControlName="purchaseId">
+            <option value="">Choose an active policy...</option>
+            <option *ngFor="let purchase of activePurchases" [value]="purchase.purchaseId">
+              Purchase #{{ purchase.purchaseId }} - {{ getPolicyType(purchase) }} Policy ({{ getPolicyStatus(purchase) }})
+            </option>
+          </select>
+          <div *ngIf="claimForm.get('purchaseId')?.invalid && claimForm.get('purchaseId')?.touched" class="text-danger">
+            Please select an active policy.
+          </div>
+          <small class="form-text text-muted">
+            Only active (confirmed) policies are eligible for claims. Cancelled policies cannot be used for claims.
+          </small>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" (click)="hideClaimForm()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="claimForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></span>
+            Submit Claim
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && claims.length === 0" class="text-center text-muted py-5">
+    <i class="fas fa-clipboard fa-3x mb-3"></i>
+    <h5>No claims found</h5>
+    <p>You have not submitted any claims yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && claims.length > 0">
+    <div class="card shadow">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">My Claims</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Claim ID</th>
+                <th>Purchase ID</th>
+                <th>Policy Type</th>
+                <th>Claim Status</th>
+                <th>Submitted At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let claim of claims">
+                <td>{{ getClaimId(claim) }}</td>
+                <td>{{ getPurchaseId(claim) }}</td>
+                <td>
+                  <span *ngFor="let purchase of purchases">
+                    <span *ngIf="purchase.purchaseId === getPurchaseId(claim)">
+                      {{ getPolicyType(purchase) }}
+                    </span>
+                  </span>
+                </td>
+                <td>
+                  <span [class]="getStatusBadgeClass(claim.claimStatus)">
+                    {{ claim.claimStatus }}
+                  </span>
+                </td>
+                <td>{{ claim.uploadedAt | date:'medium' }}</td>
+                <td>
+                  <button 
+                    *ngIf="claim.claimStatus === 'PENDING'" 
+                    class="btn btn-sm btn-outline-danger" 
+                    (click)="withdrawClaim(claim)"
+                    [disabled]="isLoading">
+                    <i class="fas fa-times"></i> Withdraw
+                  </button>
+                  <span *ngIf="claim.claimStatus !== 'PENDING'" class="text-muted">
+                    {{ claim.claimStatus === 'APPROVED' ? 'Approved' : 'Rejected' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

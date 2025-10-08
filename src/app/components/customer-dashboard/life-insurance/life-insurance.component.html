@@ -1,0 +1,168 @@
+<div class="life-insurance">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-heart me-2"></i>Life Insurance
+      </h6>
+      <button class="btn btn-primary btn-sm" (click)="showNewPolicyForm()" [disabled]="isLoading">
+        <i class="fas fa-plus me-1"></i>New Life Policy
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <!-- Life Policy Form -->
+  <div *ngIf="showForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">New Life Insurance Policy</h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="lifeForm" (ngSubmit)="submitPolicy()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="age" class="form-label">Age *</label>
+            <input type="number" class="form-control" id="age" formControlName="age" min="18" max="70">
+            <div *ngIf="lifeForm.get('age')?.invalid && lifeForm.get('age')?.touched" class="text-danger">
+              <small *ngIf="lifeForm.get('age')?.errors?.['required']">Age is required</small>
+              <small *ngIf="lifeForm.get('age')?.errors?.['min']">Age must be at least 18</small>
+              <small *ngIf="lifeForm.get('age')?.errors?.['max']">Age cannot exceed 70</small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="gender" class="form-label">Gender *</label>
+            <select class="form-select" id="gender" formControlName="gender">
+              <option value="">Select Gender</option>
+              <option *ngFor="let gender of genders" [value]="gender.value">{{ gender.label }}</option>
+            </select>
+            <div *ngIf="lifeForm.get('gender')?.invalid && lifeForm.get('gender')?.touched" class="text-danger">
+              <small *ngIf="lifeForm.get('gender')?.errors?.['required']">Gender is required</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="sumAssured" class="form-label">Sum Assured (₹) *</label>
+            <input type="number" class="form-control" id="sumAssured" formControlName="sumAssured" min="100000" max="10000000">
+            <div *ngIf="lifeForm.get('sumAssured')?.invalid && lifeForm.get('sumAssured')?.touched" class="text-danger">
+              <small *ngIf="lifeForm.get('sumAssured')?.errors?.['required']">Sum assured is required</small>
+              <small *ngIf="lifeForm.get('sumAssured')?.errors?.['min']">Minimum sum assured is ₹1,00,000</small>
+              <small *ngIf="lifeForm.get('sumAssured')?.errors?.['max']">Maximum sum assured is ₹1,00,00,000</small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="policyTerm" class="form-label">Policy Term (Years) *</label>
+            <input type="number" class="form-control" id="policyTerm" formControlName="policyTerm" min="5" max="30">
+            <div *ngIf="lifeForm.get('policyTerm')?.invalid && lifeForm.get('policyTerm')?.touched" class="text-danger">
+              <small *ngIf="lifeForm.get('policyTerm')?.errors?.['required']">Policy term is required</small>
+              <small *ngIf="lifeForm.get('policyTerm')?.errors?.['min']">Minimum policy term is 5 years</small>
+              <small *ngIf="lifeForm.get('policyTerm')?.errors?.['max']">Maximum policy term is 30 years</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="occupationRisk" class="form-label">Occupation Risk *</label>
+            <select class="form-select" id="occupationRisk" formControlName="occupationRisk">
+              <option *ngFor="let risk of occupationRisks" [value]="risk.value">{{ risk.label }}</option>
+            </select>
+            <div *ngIf="lifeForm.get('occupationRisk')?.invalid && lifeForm.get('occupationRisk')?.touched" class="text-danger">
+              <small *ngIf="lifeForm.get('occupationRisk')?.errors?.['required']">Occupation risk is required</small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="form-check mt-4">
+              <input class="form-check-input" type="checkbox" id="smoker" formControlName="smoker">
+              <label class="form-check-label" for="smoker">
+                Smoker
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-12 mb-3">
+            <button type="button" class="btn btn-info me-2" (click)="calculatePremium()" [disabled]="lifeForm.invalid || isLoading">
+              <i class="fas fa-calculator me-1"></i>Calculate Premium
+            </button>
+            <div *ngIf="calculatedPremium !== null" class="alert alert-info mt-2">
+              <strong>Calculated Premium: ₹{{ calculatedPremium | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" (click)="hideForm()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="lifeForm.invalid || isLoading">
+            <i class="fas fa-save me-1"></i>Create Policy
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Life Policies List -->
+  <div *ngIf="!isLoading && lifePolicies.length === 0" class="text-center text-muted py-5">
+    <i class="fas fa-heart fa-3x mb-3"></i>
+    <h5>No life policies found</h5>
+    <p>You have not created any life insurance policies yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && lifePolicies.length > 0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Policy ID</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Sum Assured</th>
+            <th>Policy Term</th>
+            <th>Premium</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let policy of lifePolicies">
+            <td>{{ policy.id }}</td>
+            <td>{{ policy.age }}</td>
+            <td>{{ policy.gender | titlecase }}</td>
+            <td>₹{{ policy.sumAssured | number:'1.0-0' }}</td>
+            <td>{{ policy.policyTerm }} years</td>
+            <td>₹{{ policy.premium | number:'1.2-2' }}</td>
+            <td>
+              <span [class]="getStatusBadgeClass(policy.status)">{{ policy.status || 'PENDING' }}</span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-success" 
+                        (click)="confirmPurchase(policy)" 
+                        [disabled]="isLoading || !canConfirm(policy)"
+                        [title]="!canConfirm(policy) ? 'Policy already confirmed' : 'Confirm purchase'">
+                  <i class="fas fa-check"></i> Confirm
+                </button>
+                <button class="btn btn-sm btn-outline-danger" 
+                        (click)="cancelPolicy(policy.id!)" 
+                        [disabled]="isLoading || !canCancel(policy)"
+                        [title]="!canCancel(policy) ? 'Cannot cancel confirmed policy' : 'Cancel policy'">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

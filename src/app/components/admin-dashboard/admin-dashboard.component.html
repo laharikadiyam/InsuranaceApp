@@ -1,0 +1,120 @@
+<div class="admin-dashboard">
+  <!-- Navigation Header -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Insurance App - Admin Dashboard</a>
+      <div class="navbar-nav ms-auto">
+        <span class="navbar-text me-3">
+          Welcome, {{ currentUser?.name }}
+        </span>
+        <button class="btn btn-outline-light" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid mt-4">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!isLoading" class="row">
+      <!-- Admin Profile Card -->
+      <div class="col-md-4 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Admin Profile</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="currentUser" class="profile-info">
+              <div class="mb-3">
+                <strong>Name:</strong> {{ currentUser.name }}
+              </div>
+              <div class="mb-3">
+                <strong>Email:</strong> {{ currentUser.email }}
+              </div>
+              <div class="mb-3">
+                <strong>PAN Number:</strong> {{ currentUser.panNumber }}
+              </div>
+              <div class="mb-3">
+                <strong>Status:</strong> 
+                <span [class]="getStatusBadgeClass(currentUser.isActive)">
+                  {{ getStatusText(currentUser.isActive) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+              <i class="fas fa-bolt me-2"></i>Quick Actions
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-warning btn-lg w-100" routerLink="/admin/dashboard/pending-admins">
+                  <i class="fas fa-user-shield d-block mb-2" style="font-size: 2rem;"></i>
+                  Approve Admins
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-info btn-lg w-100" routerLink="/admin/dashboard/pending-customers">
+                  <i class="fas fa-user-check d-block mb-2" style="font-size: 2rem;"></i>
+                  Approve Customers
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-warning btn-lg w-100" routerLink="/admin/dashboard/all-users">
+                  <i class="fas fa-users d-block mb-2" style="font-size: 2rem;"></i>
+                  View All Users
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-info btn-lg w-100" routerLink="/admin/dashboard/user-search">
+                  <i class="fas fa-search d-block mb-2" style="font-size: 2rem;"></i>
+                  Search Users
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-secondary btn-lg w-100" routerLink="/admin/dashboard/change-password">
+                  <i class="fas fa-key d-block mb-2" style="font-size: 2rem;"></i>
+                  Change Password
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-success btn-lg w-100" routerLink="/admin/dashboard/policy-management">
+                  <i class="fas fa-shield-alt d-block mb-2" style="font-size: 2rem;"></i>
+                  Manage Policies
+                </button>
+              </div>
+              <div class="col-lg-2 col-md-6 mb-3">
+                <button class="btn btn-outline-danger btn-lg w-100" routerLink="/admin/dashboard/claim-management">
+                  <i class="fas fa-clipboard-list d-block mb-2" style="font-size: 2rem;"></i>
+                  Manage Claims
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

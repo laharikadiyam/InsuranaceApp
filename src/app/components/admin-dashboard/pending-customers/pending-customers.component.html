@@ -1,0 +1,112 @@
+<div class="pending-customers-container">
+  <div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-user-clock me-2"></i>Pending Customer Approvals
+            </h5>
+            <button class="btn btn-outline-light btn-sm" (click)="goBack()">
+              <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </button>
+          </div>
+          <div class="card-body">
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="text-center my-5">
+              <div class="spinner-border text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Loading pending customers...</p>
+            </div>
+
+            <!-- No Pending Customers -->
+            <div *ngIf="!isLoading && pendingCustomers.length === 0" class="text-center text-muted py-4">
+              <i class="fas fa-check-circle fs-1 text-success"></i>
+              <p class="mt-2">No pending customer approvals</p>
+              <small>All customer accounts are currently active</small>
+            </div>
+
+            <!-- Pending Customers Table -->
+            <div *ngIf="!isLoading && pendingCustomers.length > 0" class="table-responsive">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">
+                  <i class="fas fa-table me-2"></i>Pending Customers List
+                  <span class="badge bg-secondary ms-2">{{ pendingCustomers.length }} customers</span>
+                </h6>
+                <button class="btn btn-outline-primary btn-sm" (click)="loadPendingCustomers()">
+                  <i class="fas fa-refresh me-1"></i>Refresh
+                </button>
+              </div>
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>PAN Number</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let customer of pendingCustomers">
+                    <td>
+                      <span class="fw-bold text-primary">{{ customer.id }}</span>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-lg me-2 text-info"></i>
+                        {{ customer.name }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-envelope me-2 text-muted"></i>
+                        {{ customer.email }}
+                      </div>
+                    </td>
+                    <td>
+                      <code class="bg-light px-2 py-1 rounded">{{ customer.panNumber }}</code>
+                    </td>
+                    <td>
+                      <span [class]="getStatusBadgeClass(customer.isActive)">
+                        <i class="fas" [class.fa-check-circle]="customer.isActive" [class.fa-times-circle]="!customer.isActive"></i>
+                        {{ getStatusText(customer.isActive) }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <button 
+                          *ngIf="!customer.isActive"
+                          class="btn btn-success btn-sm" 
+                          (click)="activateCustomer(customer.id)" 
+                          title="Activate Customer">
+                          <i class="fas fa-check me-1"></i> Activate
+                        </button>
+                        <button 
+                          *ngIf="customer.isActive"
+                          class="btn btn-warning btn-sm" 
+                          (click)="deactivateUser(customer.id)" 
+                          title="Deactivate Customer">
+                          <i class="fas fa-ban me-1"></i> Deactivate
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

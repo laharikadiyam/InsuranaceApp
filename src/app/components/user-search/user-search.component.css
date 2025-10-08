@@ -1,0 +1,162 @@
+.user-search-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+  border-radius: 10px 10px 0 0 !important;
+  border-bottom: none;
+}
+
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5c636a;
+  border-color: #565e64;
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.badge {
+  font-size: 0.875em;
+  padding: 0.5em 0.75em;
+  border-radius: 6px;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* User details styling */
+.user-details strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.user-details .fw-bold {
+  font-weight: 700 !important;
+}
+
+.user-details code {
+  background-color: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.875em;
+  border: 1px solid #e9ecef;
+}
+
+/* Action buttons styling */
+.btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+}
+
+.btn-warning:hover {
+  background-color: #ffca2c;
+  border-color: #ffc720;
+  color: #000;
+}
+
+/* Badge improvements */
+.badge.bg-success {
+  background-color: #198754 !important;
+}
+
+.badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.badge.bg-primary {
+  background-color: #0d6efd !important;
+}
+
+/* Icon styling */
+.fa-user-circle {
+  color: #0d6efd;
+}
+
+.fa-envelope {
+  color: #6c757d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-search-container {
+    padding: 10px;
+  }
+  
+  .col-md-3, .col-md-6 {
+    margin-bottom: 15px;
+  }
+  
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .d-flex.justify-content-center {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .gap-3 {
+    gap: 1rem !important;
+  }
+}

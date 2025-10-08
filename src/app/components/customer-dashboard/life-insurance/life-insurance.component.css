@@ -1,0 +1,52 @@
+.life-insurance {
+  padding: 20px;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+  background-color: #f8f9fc;
+  border-bottom: 1px solid #e3e6f0;
+}
+
+.btn-group .btn {
+  margin-right: 5px;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.table th {
+  background-color: #f8f9fc;
+  border-color: #e3e6f0;
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.75em;
+}
+
+.form-check {
+  margin-bottom: 0.5rem;
+}
+
+.alert {
+  border-radius: 0.35rem;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.text-muted {
+  color: #858796 !important;
+}
+
+.fa-3x {
+  font-size: 3em;
+}

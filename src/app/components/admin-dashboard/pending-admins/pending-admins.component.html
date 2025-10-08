@@ -1,0 +1,112 @@
+<div class="pending-admins-container">
+  <div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-user-clock me-2"></i>Pending Admin Approvals
+            </h5>
+            <button class="btn btn-outline-light btn-sm" (click)="goBack()">
+              <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </button>
+          </div>
+          <div class="card-body">
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="text-center my-5">
+              <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Loading pending admins...</p>
+            </div>
+
+            <!-- No Pending Admins -->
+            <div *ngIf="!isLoading && pendingAdmins.length === 0" class="text-center text-muted py-4">
+              <i class="fas fa-check-circle fs-1 text-success"></i>
+              <p class="mt-2">No pending admin approvals</p>
+              <small>All admin accounts are currently active</small>
+            </div>
+
+            <!-- Pending Admins Table -->
+            <div *ngIf="!isLoading && pendingAdmins.length > 0" class="table-responsive">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">
+                  <i class="fas fa-table me-2"></i>Pending Admins List
+                  <span class="badge bg-secondary ms-2">{{ pendingAdmins.length }} admins</span>
+                </h6>
+                <button class="btn btn-outline-warning btn-sm" (click)="loadPendingAdmins()">
+                  <i class="fas fa-refresh me-1"></i>Refresh
+                </button>
+              </div>
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>PAN Number</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let admin of pendingAdmins">
+                    <td>
+                      <span class="fw-bold text-primary">{{ admin.id }}</span>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-user-shield fa-lg me-2 text-warning"></i>
+                        {{ admin.name }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-envelope me-2 text-muted"></i>
+                        {{ admin.email }}
+                      </div>
+                    </td>
+                    <td>
+                      <code class="bg-light px-2 py-1 rounded">{{ admin.panNumber }}</code>
+                    </td>
+                    <td>
+                      <span [class]="getStatusBadgeClass(admin.isActive)">
+                        <i class="fas" [class.fa-check-circle]="admin.isActive" [class.fa-times-circle]="!admin.isActive"></i>
+                        {{ getStatusText(admin.isActive) }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <button 
+                          *ngIf="!admin.isActive"
+                          class="btn btn-success btn-sm" 
+                          (click)="activateAdmin(admin.id)" 
+                          title="Activate Admin">
+                          <i class="fas fa-check me-1"></i> Activate
+                        </button>
+                        <button 
+                          *ngIf="admin.isActive"
+                          class="btn btn-warning btn-sm" 
+                          (click)="deactivateUser(admin.id)" 
+                          title="Deactivate Admin">
+                          <i class="fas fa-ban me-1"></i> Deactivate
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

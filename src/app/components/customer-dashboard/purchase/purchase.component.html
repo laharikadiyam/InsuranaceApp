@@ -1,0 +1,73 @@
+<div class="purchase">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-shopping-cart me-2"></i>Policy Purchase
+      </h6>
+      <button class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i>Back
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <div *ngIf="!purchase">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-info-circle me-2"></i>Purchase Summary
+        </h6>
+      </div>
+      <div class="card-body">
+        <div *ngIf="purchaseData">
+          <div><strong>Policy Name:</strong> {{ purchaseData.policy.policyName }}</div>
+          <div><strong>Type:</strong> {{ purchaseData.policy.type }}</div>
+          <div><strong>Coverage:</strong> {{ purchaseData.policy.coverage }}</div>
+          <div><strong>Premium:</strong> ₹{{ purchaseData.calculatedPremium?.annualPremium || purchaseData.calculatedPremium?.comprehensivePremium || purchaseData.calculatedPremium?.thirdPartyPremium }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-success btn-lg" (click)="confirmPurchase()" [disabled]="isLoading">
+        <i class="fas fa-check-circle me-2"></i>Confirm Purchase
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="purchase">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-receipt me-2"></i>Purchase Details
+        </h6>
+      </div>
+      <div class="card-body">
+        <div><strong>Purchase ID:</strong> {{ purchase.purchaseId }}</div>
+        <div><strong>Purchase Date:</strong> {{ purchase.purchaseDate }}</div>
+        <div><strong>Expiry Date:</strong> {{ purchase.expiryDate }}</div>
+        <div><strong>Policy Type:</strong>
+          <span *ngIf="purchase.bikePolicy">Bike</span>
+          <span *ngIf="purchase.carPolicy">Car</span>
+          <span *ngIf="purchase.healthPolicy">Health</span>
+          <span *ngIf="purchase.lifePolicy">Life</span>
+        </div>
+      </div>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-danger me-2" (click)="cancelPurchase()" [disabled]="isLoading">
+        <i class="fas fa-times me-2"></i>Cancel Purchase
+      </button>
+      <button class="btn btn-outline-primary" (click)="goToMyPurchases()">
+        <i class="fas fa-list me-2"></i>My Purchases
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+

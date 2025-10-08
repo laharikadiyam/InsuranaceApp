@@ -1,0 +1,252 @@
+<div class="policy-management">
+  <!-- Header -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-shield-alt me-2"></i>Policy Management
+      </h6>
+      <button class="btn btn-primary" (click)="showAddPolicyForm()" [disabled]="showAddForm || showEditForm">
+        <i class="fas fa-plus me-2"></i>Add New Policy
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Add/Edit Policy Form -->
+  <div *ngIf="showAddForm || showEditForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-edit me-2"></i>{{ showAddForm ? 'Add New Policy' : 'Edit Policy' }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="policyForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="policyName" class="form-label">Policy Name *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="policyName" 
+              formControlName="policyName"
+              [class.is-invalid]="policyForm.get('policyName')?.invalid && policyForm.get('policyName')?.touched"
+            >
+            <div *ngIf="policyForm.get('policyName')?.invalid && policyForm.get('policyName')?.touched" class="invalid-feedback">
+              <div *ngIf="policyForm.get('policyName')?.errors?.['required']">Policy name is required</div>
+              <div *ngIf="policyForm.get('policyName')?.errors?.['maxlength']">Policy name must not exceed 100 characters</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="type" class="form-label">Type *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="type" 
+              formControlName="type"
+              [class.is-invalid]="policyForm.get('type')?.invalid && policyForm.get('type')?.touched"
+            >
+            <div *ngIf="policyForm.get('type')?.invalid && policyForm.get('type')?.touched" class="invalid-feedback">
+              <div *ngIf="policyForm.get('type')?.errors?.['required']">Type is required</div>
+              <div *ngIf="policyForm.get('type')?.errors?.['maxlength']">Type must not exceed 50 characters</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="premium" class="form-label">Premium (₹) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="premium" 
+              formControlName="premium"
+              min="0"
+              step="0.01"
+              [class.is-invalid]="policyForm.get('premium')?.invalid && policyForm.get('premium')?.touched"
+            >
+            <div *ngIf="policyForm.get('premium')?.invalid && policyForm.get('premium')?.touched" class="invalid-feedback">
+              <div *ngIf="policyForm.get('premium')?.errors?.['required']">Premium is required</div>
+              <div *ngIf="policyForm.get('premium')?.errors?.['min']">Premium must be greater than 0</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="tenure" class="form-label">Tenure (months) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="tenure" 
+              formControlName="tenure"
+              min="1"
+              max="600"
+              [class.is-invalid]="policyForm.get('tenure')?.invalid && policyForm.get('tenure')?.touched"
+            >
+            <div *ngIf="policyForm.get('tenure')?.invalid && policyForm.get('tenure')?.touched" class="invalid-feedback">
+              <div *ngIf="policyForm.get('tenure')?.errors?.['required']">Tenure is required</div>
+              <div *ngIf="policyForm.get('tenure')?.errors?.['min']">Tenure must be at least 1 month</div>
+              <div *ngIf="policyForm.get('tenure')?.errors?.['max']">Tenure must not exceed 600 months (50 years)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="coverage" class="form-label">Coverage *</label>
+          <textarea 
+            class="form-control" 
+            id="coverage" 
+            rows="3"
+            formControlName="coverage"
+            [class.is-invalid]="policyForm.get('coverage')?.invalid && policyForm.get('coverage')?.touched"
+          ></textarea>
+          <div *ngIf="policyForm.get('coverage')?.invalid && policyForm.get('coverage')?.touched" class="invalid-feedback">
+            <div *ngIf="policyForm.get('coverage')?.errors?.['required']">Coverage is required</div>
+            <div *ngIf="policyForm.get('coverage')?.errors?.['maxlength']">Coverage must not exceed 255 characters</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="active" 
+              formControlName="active"
+            >
+            <label class="form-check-label" for="active">
+              Active Policy
+            </label>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="policyForm.invalid || isLoading">
+            <i class="fas fa-save me-2"></i>{{ showAddForm ? 'Create Policy' : 'Update Policy' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelForm()">
+            <i class="fas fa-times me-2"></i>Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-filter me-2"></i>Filters
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="filterType" class="form-label">Policy Type</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="filterType" 
+            [(ngModel)]="filterType"
+            placeholder="Enter policy type"
+          >
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="filterActive" class="form-label">Status</label>
+          <select class="form-select" id="filterActive" [(ngModel)]="filterActiveOnly">
+            <option [ngValue]="null">All Policies</option>
+            <option [ngValue]="true">Active Only</option>
+            <option [ngValue]="false">Inactive Only</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="applyFilters()">
+              <i class="fas fa-search me-2"></i>Apply Filters
+            </button>
+            <button class="btn btn-outline-secondary" (click)="clearFilters()">
+              <i class="fas fa-times me-2"></i>Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policies Table -->
+  <div class="card shadow">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-list me-2"></i>Policies ({{ policies.length }})
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Policy Name</th>
+              <th>Type</th>
+              <th>Premium (₹)</th>
+              <th>Tenure (months)</th>
+              <th>Coverage</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let policy of policies">
+              <td>{{ policy.policy_id }}</td>
+              <td>{{ policy.policyName }}</td>
+              <td>{{ policy.type }}</td>
+              <td>{{ policy.premium | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td>{{ policy.tenure }}</td>
+              <td>
+                <span class="text-truncate d-inline-block" style="max-width: 200px;" title="{{ policy.coverage }}">
+                  {{ policy.coverage }}
+                </span>
+              </td>
+              <td>
+                <span [class]="getStatusBadgeClass(policy.active)">
+                  {{ getStatusText(policy.active) }}
+                </span>
+              </td>
+              <td>
+                                 <div class="btn-group" role="group">
+                   <button class="btn btn-sm btn-outline-primary" (click)="showEditPolicyForm(policy)" title="Edit">
+                     Edit
+                   </button>
+                   <button class="btn btn-sm btn-outline-danger" (click)="deletePolicy(policy.policy_id!)" title="Delete">
+                     Delete
+                   </button>
+                 </div>
+              </td>
+            </tr>
+            <tr *ngIf="policies.length === 0 && !isLoading">
+              <td colspan="8" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-3"></i>
+                <p>No policies found</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

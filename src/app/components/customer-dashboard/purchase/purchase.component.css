@@ -1,0 +1,46 @@
+.purchase {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+.card {
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.card-header {
+  border-radius: 10px 10px 0 0 !important;
+  font-weight: 600;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+.alert {
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+}
+.text-center {
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  .purchase {
+    padding: 10px;
+  }
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  .card-header h6 {
+    font-size: 1rem;
+  }
+}
+
+
+
+
+
+
