@@ -1,0 +1,474 @@
+<div class="vehicle-management">
+  <!-- Header -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-calculator me-2"></i>{{ policyType | titlecase }} Insurance Calculator
+      </h6>
+      <button class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i>Back to Policies
+      </button>
+    </div>
+  </div>
+
+  <!-- Policy Info -->
+  <div *ngIf="policy" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-info-circle me-2"></i>Selected Policy
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <strong>Policy Name:</strong> {{ policy.policyName }}
+        </div>
+        <div class="col-md-6">
+          <strong>Type:</strong> {{ policy.type }}
+        </div>
+        <div class="col-md-6">
+          <strong>Coverage:</strong> {{ policy.coverage }}
+        </div>
+        <div class="col-md-6">
+          <strong>Tenure:</strong> {{ policy.tenure }} months
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Calculating...</span>
+    </div>
+  </div>
+
+  <!-- Bike Insurance Form -->
+  <div *ngIf="showBikeForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-motorcycle me-2"></i>Bike Insurance Details
+      </h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="bikeForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="cc" class="form-label">Engine Capacity (CC) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="cc" 
+              formControlName="cc"
+              [class.is-invalid]="bikeForm.get('cc')?.invalid && bikeForm.get('cc')?.touched"
+            >
+            <div *ngIf="bikeForm.get('cc')?.invalid && bikeForm.get('cc')?.touched" class="invalid-feedback">
+              <div *ngIf="bikeForm.get('cc')?.errors?.['required']">Engine capacity is required</div>
+              <div *ngIf="bikeForm.get('cc')?.errors?.['min']">Engine capacity must be greater than 0</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="ageinMonths" class="form-label">Age in Months *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="ageinMonths" 
+              formControlName="ageinMonths"
+              [class.is-invalid]="bikeForm.get('ageinMonths')?.invalid && bikeForm.get('ageinMonths')?.touched"
+            >
+            <div *ngIf="bikeForm.get('ageinMonths')?.invalid && bikeForm.get('ageinMonths')?.touched" class="invalid-feedback">
+              <div *ngIf="bikeForm.get('ageinMonths')?.errors?.['required']">Age is required</div>
+              <div *ngIf="bikeForm.get('ageinMonths')?.errors?.['min']">Age must be 0 or greater</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="manufacturerName" class="form-label">Manufacturer *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="manufacturerName" 
+              formControlName="manufacturerName"
+              [class.is-invalid]="bikeForm.get('manufacturerName')?.invalid && bikeForm.get('manufacturerName')?.touched"
+            >
+            <div *ngIf="bikeForm.get('manufacturerName')?.invalid && bikeForm.get('manufacturerName')?.touched" class="invalid-feedback">
+              <div *ngIf="bikeForm.get('manufacturerName')?.errors?.['required']">Manufacturer is required</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="registrationNumber" class="form-label">Registration Number *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="registrationNumber" 
+              formControlName="registrationNumber"
+              [class.is-invalid]="bikeForm.get('registrationNumber')?.invalid && bikeForm.get('registrationNumber')?.touched"
+            >
+            <div *ngIf="bikeForm.get('registrationNumber')?.invalid && bikeForm.get('registrationNumber')?.touched" class="invalid-feedback">
+              <div *ngIf="bikeForm.get('registrationNumber')?.errors?.['required']">Registration number is required</div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Car Insurance Form -->
+  <div *ngIf="showCarForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-car me-2"></i>Car Insurance Details
+      </h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="carForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="carCc" class="form-label">Engine Capacity (CC) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="carCc" 
+              formControlName="cc"
+              [class.is-invalid]="carForm.get('cc')?.invalid && carForm.get('cc')?.touched"
+            >
+            <div *ngIf="carForm.get('cc')?.invalid && carForm.get('cc')?.touched" class="invalid-feedback">
+              <div *ngIf="carForm.get('cc')?.errors?.['required']">Engine capacity is required</div>
+              <div *ngIf="carForm.get('cc')?.errors?.['min']">Engine capacity must be greater than 0</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="carAgeinMonths" class="form-label">Age in Months *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="carAgeinMonths" 
+              formControlName="ageinMonths"
+              [class.is-invalid]="carForm.get('ageinMonths')?.invalid && carForm.get('ageinMonths')?.touched"
+            >
+            <div *ngIf="carForm.get('ageinMonths')?.invalid && carForm.get('ageinMonths')?.touched" class="invalid-feedback">
+              <div *ngIf="carForm.get('ageinMonths')?.errors?.['required']">Age is required</div>
+              <div *ngIf="carForm.get('ageinMonths')?.errors?.['min']">Age must be 0 or greater</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="carManufacturerName" class="form-label">Manufacturer *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="carManufacturerName" 
+              formControlName="manufacturerName"
+              [class.is-invalid]="carForm.get('manufacturerName')?.invalid && carForm.get('manufacturerName')?.touched"
+            >
+            <div *ngIf="carForm.get('manufacturerName')?.invalid && carForm.get('manufacturerName')?.touched" class="invalid-feedback">
+              <div *ngIf="carForm.get('manufacturerName')?.errors?.['required']">Manufacturer is required</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="carRegistrationNumber" class="form-label">Registration Number *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="carRegistrationNumber" 
+              formControlName="registrationNumber"
+              [class.is-invalid]="carForm.get('registrationNumber')?.invalid && carForm.get('registrationNumber')?.touched"
+            >
+            <div *ngIf="carForm.get('registrationNumber')?.invalid && carForm.get('registrationNumber')?.touched" class="invalid-feedback">
+              <div *ngIf="carForm.get('registrationNumber')?.errors?.['required']">Registration number is required</div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Health Insurance Form -->
+  <div *ngIf="showHealthForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-heartbeat me-2"></i>Health Insurance Details
+      </h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="healthForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="age" class="form-label">Age *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="age" 
+              formControlName="age"
+              [class.is-invalid]="healthForm.get('age')?.invalid && healthForm.get('age')?.touched"
+            >
+            <div *ngIf="healthForm.get('age')?.invalid && healthForm.get('age')?.touched" class="invalid-feedback">
+              <div *ngIf="healthForm.get('age')?.errors?.['required']">Age is required</div>
+              <div *ngIf="healthForm.get('age')?.errors?.['min']">Age must be at least 1</div>
+              <div *ngIf="healthForm.get('age')?.errors?.['max']">Age must not exceed 100</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="numberOfMembers" class="form-label">Number of Members *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="numberOfMembers" 
+              formControlName="numberOfMembers"
+              [class.is-invalid]="healthForm.get('numberOfMembers')?.invalid && healthForm.get('numberOfMembers')?.touched"
+            >
+            <div *ngIf="healthForm.get('numberOfMembers')?.invalid && healthForm.get('numberOfMembers')?.touched" class="invalid-feedback">
+              <div *ngIf="healthForm.get('numberOfMembers')?.errors?.['required']">Number of members is required</div>
+              <div *ngIf="healthForm.get('numberOfMembers')?.errors?.['min']">Must have at least 1 member</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="sumInsured" class="form-label">Sum Insured (₹) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="sumInsured" 
+              formControlName="sumInsured"
+              [class.is-invalid]="healthForm.get('sumInsured')?.invalid && healthForm.get('sumInsured')?.touched"
+            >
+            <div *ngIf="healthForm.get('sumInsured')?.invalid && healthForm.get('sumInsured')?.touched" class="invalid-feedback">
+              <div *ngIf="healthForm.get('sumInsured')?.errors?.['required']">Sum insured is required</div>
+              <div *ngIf="healthForm.get('sumInsured')?.errors?.['min']">Sum insured must be at least ₹10,000</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="smoker" 
+                formControlName="smoker"
+              >
+              <label class="form-check-label" for="smoker">
+                Smoker
+              </label>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="preExisting" 
+                formControlName="preExisting"
+              >
+              <label class="form-check-label" for="preExisting">
+                Pre-existing Conditions
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Life Insurance Form -->
+  <div *ngIf="showLifeForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-user-shield me-2"></i>Life Insurance Details
+      </h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="lifeForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="lifeAge" class="form-label">Age *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="lifeAge" 
+              formControlName="age"
+              [class.is-invalid]="lifeForm.get('age')?.invalid && lifeForm.get('age')?.touched"
+            >
+            <div *ngIf="lifeForm.get('age')?.invalid && lifeForm.get('age')?.touched" class="invalid-feedback">
+              <div *ngIf="lifeForm.get('age')?.errors?.['required']">Age is required</div>
+              <div *ngIf="lifeForm.get('age')?.errors?.['min']">Age must be at least 18</div>
+              <div *ngIf="lifeForm.get('age')?.errors?.['max']">Age must not exceed 70</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="gender" class="form-label">Gender *</label>
+            <select 
+              class="form-select" 
+              id="gender" 
+              formControlName="gender"
+              [class.is-invalid]="lifeForm.get('gender')?.invalid && lifeForm.get('gender')?.touched"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            <div *ngIf="lifeForm.get('gender')?.invalid && lifeForm.get('gender')?.touched" class="invalid-feedback">
+              <div *ngIf="lifeForm.get('gender')?.errors?.['required']">Gender is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="sumAssured" class="form-label">Sum Assured (₹) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="sumAssured" 
+              formControlName="sumAssured"
+              [class.is-invalid]="lifeForm.get('sumAssured')?.invalid && lifeForm.get('sumAssured')?.touched"
+            >
+            <div *ngIf="lifeForm.get('sumAssured')?.invalid && lifeForm.get('sumAssured')?.touched" class="invalid-feedback">
+              <div *ngIf="lifeForm.get('sumAssured')?.errors?.['required']">Sum assured is required</div>
+              <div *ngIf="lifeForm.get('sumAssured')?.errors?.['min']">Sum assured must be at least ₹1,00,000</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="policyTerm" class="form-label">Policy Term (Years) *</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="policyTerm" 
+              formControlName="policyTerm"
+              [class.is-invalid]="lifeForm.get('policyTerm')?.invalid && lifeForm.get('policyTerm')?.touched"
+            >
+            <div *ngIf="lifeForm.get('policyTerm')?.invalid && lifeForm.get('policyTerm')?.touched" class="invalid-feedback">
+              <div *ngIf="lifeForm.get('policyTerm')?.errors?.['required']">Policy term is required</div>
+              <div *ngIf="lifeForm.get('policyTerm')?.errors?.['min']">Policy term must be at least 1 year</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="lifeSmoker" 
+                formControlName="smoker"
+              >
+              <label class="form-check-label" for="lifeSmoker">
+                Smoker
+              </label>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="occupationRisk" class="form-label">Occupation Risk *</label>
+            <select 
+              class="form-select" 
+              id="occupationRisk" 
+              formControlName="occupationRisk"
+              [class.is-invalid]="lifeForm.get('occupationRisk')?.invalid && lifeForm.get('occupationRisk')?.touched"
+            >
+              <option value="low">Low Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="high">High Risk</option>
+            </select>
+            <div *ngIf="lifeForm.get('occupationRisk')?.invalid && lifeForm.get('occupationRisk')?.touched" class="invalid-feedback">
+              <div *ngIf="lifeForm.get('occupationRisk')?.errors?.['required']">Occupation risk is required</div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Calculate Button -->
+  <div class="card shadow mb-4">
+    <div class="card-body text-center">
+      <button 
+        class="btn btn-primary btn-lg" 
+        (click)="calculatePremium()" 
+        [disabled]="isLoading || (showBikeForm && bikeForm.invalid) || (showCarForm && carForm.invalid) || (showHealthForm && healthForm.invalid) || (showLifeForm && lifeForm.invalid)"
+      >
+        <i class="fas fa-calculator me-2"></i>Calculate Premium
+      </button>
+    </div>
+  </div>
+
+  <!-- Premium Results -->
+  <div *ngIf="calculatedPremium" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-chart-line me-2"></i>Premium Calculation Results
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <!-- Vehicle Insurance Results -->
+        <div *ngIf="calculatedPremium.idv" class="col-md-4 mb-3">
+          <div class="text-center">
+            <h6 class="text-muted">IDV</h6>
+            <h4 class="text-primary">₹{{ calculatedPremium.idv | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+        
+        <div *ngIf="calculatedPremium.thirdPartyPremium" class="col-md-4 mb-3">
+          <div class="text-center">
+            <h6 class="text-muted">Third Party Premium</h6>
+            <h4 class="text-warning">₹{{ calculatedPremium.thirdPartyPremium | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+        
+        <div *ngIf="calculatedPremium.comprehensivePremium" class="col-md-4 mb-3">
+          <div class="text-center">
+            <h6 class="text-muted">Comprehensive Premium</h6>
+            <h4 class="text-success">₹{{ calculatedPremium.comprehensivePremium | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+
+        <!-- Health/Life Insurance Results -->
+        <div *ngIf="calculatedPremium.annualPremium" class="col-md-6 mb-3">
+          <div class="text-center">
+            <h6 class="text-muted">Annual Premium</h6>
+            <h4 class="text-success">₹{{ calculatedPremium.annualPremium | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+        
+        <div *ngIf="calculatedPremium.monthlyPremium" class="col-md-6 mb-3">
+          <div class="text-center">
+            <h6 class="text-muted">Monthly Premium</h6>
+            <h4 class="text-info">₹{{ calculatedPremium.monthlyPremium | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm/Cancel Buttons -->
+      <div class="text-center mt-4 d-flex justify-content-center gap-2">
+        <button class="btn btn-success btn-lg" (click)="confirmPurchase()" [disabled]="isLoading || !createdEntityId">
+          <i class="fas fa-check-circle me-2"></i>Confirm Purchase
+        </button>
+        <button class="btn btn-outline-danger btn-lg" (click)="cancelPending()" [disabled]="isLoading || !createdEntityId">
+          <i class="fas fa-times me-2"></i>Cancel Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

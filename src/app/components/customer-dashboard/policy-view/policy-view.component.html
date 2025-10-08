@@ -1,0 +1,128 @@
+<div class="policy-view">
+  <!-- Header -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-shield-alt me-2"></i>Available Insurance Policies
+      </h6>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-filter me-2"></i>Search & Filter
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="filterType" class="form-label">Policy Type</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="filterType" 
+            [(ngModel)]="filterType"
+            placeholder="Enter policy type (e.g., Life, Health, Auto)"
+          >
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="filterActive" class="form-label">Status</label>
+          <select class="form-select" id="filterActive" [(ngModel)]="filterActiveOnly">
+            <option [ngValue]="true">Active Policies Only</option>
+            <option [ngValue]="false">Inactive Policies Only</option>
+            <option [ngValue]="null">All Policies</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="applyFilters()">
+              <i class="fas fa-search me-2"></i>Search
+            </button>
+            <button class="btn btn-outline-secondary" (click)="clearFilters()">
+              <i class="fas fa-times me-2"></i>Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policies Grid -->
+  <div *ngIf="!isLoading" class="row">
+    <div class="col-12">
+      <div class="card shadow">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-list me-2"></i>Available Policies ({{ policies.length }})
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div *ngFor="let policy of policies" class="col-lg-4 col-md-6 mb-4">
+              <div class="card policy-card h-100">
+                <div class="card-header bg-primary text-white">
+                  <h6 class="mb-0">{{ policy.policyName }}</h6>
+                </div>
+                <div class="card-body">
+                  <div class="policy-details">
+                    <div class="mb-3">
+                      <strong>Type:</strong> {{ policy.type }}
+                    </div>
+                    <div class="mb-3">
+                      <strong>Premium:</strong> {{ policy.premium | currency:'INR':'symbol':'1.2-2' }}
+                    </div>
+                    <div class="mb-3">
+                      <strong>Tenure:</strong> {{ policy.tenure }} months
+                    </div>
+                    <div class="mb-3">
+                      <strong>Coverage:</strong>
+                      <p class="text-muted small mt-1">{{ policy.coverage }}</p>
+                    </div>
+                    <div class="mb-3">
+                      <strong>Status:</strong>
+                      <span [class]="getStatusBadgeClass(policy.active)" class="ms-2">
+                        {{ getStatusText(policy.active) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer bg-light">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Policy ID: {{ policy.policy_id }}</small>
+                    <button class="btn btn-sm btn-outline-primary" (click)="viewDetails(policy)">
+                      <i class="fas fa-info-circle me-1"></i>View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Empty State -->
+          <div *ngIf="policies.length === 0" class="text-center text-muted py-5">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <h5>No policies found</h5>
+            <p>Try adjusting your search criteria or contact support for assistance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

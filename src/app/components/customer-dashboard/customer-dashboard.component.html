@@ -1,0 +1,114 @@
+<div class="customer-dashboard">
+  <!-- Navigation Header -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Insurance App - Customer Dashboard</a>
+      <div class="navbar-nav ms-auto">
+        <span class="navbar-text me-3">
+          Welcome, {{ currentUser?.name }}
+        </span>
+        <button class="btn btn-outline-light" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid mt-4">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="text-center my-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!isLoading && currentUser" class="row">
+      <!-- Customer Profile Card -->
+      <div class="col-md-6 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Customer Profile</h5>
+          </div>
+          <div class="card-body">
+            <div class="profile-info">
+              <div class="mb-3">
+                <strong>Name:</strong> {{ currentUser.name }}
+              </div>
+              <div class="mb-3">
+                <strong>Email:</strong> {{ currentUser.email }}
+              </div>
+              <div class="mb-3">
+                <strong>PAN Number:</strong> {{ currentUser.panNumber }}
+              </div>
+              <div class="mb-3">
+                <strong>Status:</strong> 
+                <span [class]="getStatusBadgeClass(currentUser.isActive)">
+                  {{ getStatusText(currentUser.isActive) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="col-md-6 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Quick Actions</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6 mb-3">
+                <button class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3" routerLink="/customer/dashboard/policy-view">
+                  <i class="bi bi-shield-check fs-1 mb-2"></i>
+                  <span>View Policies</span>
+                </button>
+              </div>
+              <div class="col-6 mb-3">
+                <button class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3" routerLink="/customer/dashboard/claim">
+                  <i class="bi bi-file-earmark-text fs-1 mb-2"></i>
+                  <span>Claims</span>
+                </button>
+              </div>
+              <div class="col-6 mb-3">
+                <button class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3" routerLink="/customer/dashboard/my-purchases">
+                  <i class="bi bi-list-check fs-1 mb-2"></i>
+                  <span>My Purchases</span>
+                </button>
+              </div>
+              <div class="col-6 mb-3">
+                <button class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3" routerLink="/customer/dashboard/change-password">
+                  <i class="bi bi-key fs-1 mb-2"></i>
+                  <span>Change Password</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Recent Activity</h5>
+          </div>
+          <div class="card-body">
+            <div class="text-center text-muted">
+              <i class="bi bi-clock-history fs-1"></i>
+              <p class="mt-2">No recent activity to display</p>
+              <small>Your recent transactions and activities will appear here</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

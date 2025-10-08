@@ -1,0 +1,151 @@
+<div class="health-insurance">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-heartbeat me-2"></i>Health Insurance
+      </h6>
+      <button class="btn btn-primary btn-sm" (click)="showNewPolicyForm()" [disabled]="isLoading">
+        <i class="fas fa-plus me-1"></i>New Health Policy
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <!-- Health Policy Form -->
+  <div *ngIf="showForm" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">New Health Insurance Policy</h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="healthForm" (ngSubmit)="submitPolicy()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="age" class="form-label">Age *</label>
+            <input type="number" class="form-control" id="age" formControlName="age" min="1" max="100">
+            <div *ngIf="healthForm.get('age')?.invalid && healthForm.get('age')?.touched" class="text-danger">
+              <small *ngIf="healthForm.get('age')?.errors?.['required']">Age is required</small>
+              <small *ngIf="healthForm.get('age')?.errors?.['min']">Age must be at least 1</small>
+              <small *ngIf="healthForm.get('age')?.errors?.['max']">Age cannot exceed 100</small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="numberOfMembers" class="form-label">Number of Members *</label>
+            <input type="number" class="form-control" id="numberOfMembers" formControlName="numberOfMembers" min="1" max="10">
+            <div *ngIf="healthForm.get('numberOfMembers')?.invalid && healthForm.get('numberOfMembers')?.touched" class="text-danger">
+              <small *ngIf="healthForm.get('numberOfMembers')?.errors?.['required']">Number of members is required</small>
+              <small *ngIf="healthForm.get('numberOfMembers')?.errors?.['min']">At least 1 member required</small>
+              <small *ngIf="healthForm.get('numberOfMembers')?.errors?.['max']">Maximum 10 members allowed</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="sumInsured" class="form-label">Sum Insured (₹) *</label>
+            <input type="number" class="form-control" id="sumInsured" formControlName="sumInsured" min="10000" max="10000000">
+            <div *ngIf="healthForm.get('sumInsured')?.invalid && healthForm.get('sumInsured')?.touched" class="text-danger">
+              <small *ngIf="healthForm.get('sumInsured')?.errors?.['required']">Sum insured is required</small>
+              <small *ngIf="healthForm.get('sumInsured')?.errors?.['min']">Minimum sum insured is ₹10,000</small>
+              <small *ngIf="healthForm.get('sumInsured')?.errors?.['max']">Maximum sum insured is ₹1,00,00,000</small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="form-check mt-4">
+              <input class="form-check-input" type="checkbox" id="smoker" formControlName="smoker">
+              <label class="form-check-label" for="smoker">
+                Smoker
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="preExisting" formControlName="preExisting">
+              <label class="form-check-label" for="preExisting">
+                Pre-existing Conditions
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-12 mb-3">
+            <button type="button" class="btn btn-info me-2" (click)="calculatePremium()" [disabled]="healthForm.invalid || isLoading">
+              <i class="fas fa-calculator me-1"></i>Calculate Premium
+            </button>
+            <div *ngIf="calculatedPremium !== null" class="alert alert-info mt-2">
+              <strong>Calculated Premium: ₹{{ calculatedPremium | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" (click)="hideForm()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="healthForm.invalid || isLoading">
+            <i class="fas fa-save me-1"></i>Create Policy
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Health Policies List -->
+  <div *ngIf="!isLoading && healthPolicies.length === 0" class="text-center text-muted py-5">
+    <i class="fas fa-heartbeat fa-3x mb-3"></i>
+    <h5>No health policies found</h5>
+    <p>You have not created any health insurance policies yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && healthPolicies.length > 0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Policy ID</th>
+            <th>Age</th>
+            <th>Members</th>
+            <th>Sum Insured</th>
+            <th>Premium</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let policy of healthPolicies">
+            <td>{{ policy.id }}</td>
+            <td>{{ policy.age }}</td>
+            <td>{{ policy.numberOfMembers }}</td>
+            <td>₹{{ policy.sumInsured | number:'1.0-0' }}</td>
+            <td>₹{{ policy.premium | number:'1.2-2' }}</td>
+            <td>
+              <span [class]="getStatusBadgeClass(policy.status)">{{ policy.status || 'PENDING' }}</span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-success" 
+                        (click)="confirmPurchase(policy)" 
+                        [disabled]="isLoading || !canConfirm(policy)"
+                        [title]="!canConfirm(policy) ? 'Policy already confirmed' : 'Confirm purchase'">
+                  <i class="fas fa-check"></i> Confirm
+                </button>
+                <button class="btn btn-sm btn-outline-danger" 
+                        (click)="cancelPolicy(policy.id!)" 
+                        [disabled]="isLoading || !canCancel(policy)"
+                        [title]="!canCancel(policy) ? 'Cannot cancel confirmed policy' : 'Cancel policy'">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="my-purchases">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="fas fa-list me-2"></i>My Policy Purchases
+      </h6>
+      <div class="d-flex align-items-center">
+        <label for="filterType" class="me-2">Filter:</label>
+        <select id="filterType" class="form-select form-select-sm" [(ngModel)]="filterType" (change)="onFilterChange()">
+          <option value="all">All Policies</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && filteredPurchases.length === 0" class="text-center text-muted py-5">
+    <i class="fas fa-inbox fa-3x mb-3"></i>
+    <h5>No purchases found</h5>
+    <p>No policies match the selected filter criteria.</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredPurchases.length > 0">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Purchase ID</th>
+            <th>Policy Type</th>
+            <th>Purchase Date</th>
+            <th>Expiry Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let purchase of filteredPurchases">
+            <td>{{ purchase.purchaseId }}</td>
+            <td>
+              <span *ngIf="purchase.bikePolicy">Bike</span>
+              <span *ngIf="purchase.carPolicy">Car</span>
+              <span *ngIf="purchase.healthPolicy">Health</span>
+              <span *ngIf="purchase.lifePolicy">Life</span>
+            </td>
+            <td>{{ purchase.purchaseDate }}</td>
+            <td>
+              {{ purchase.expiryDate }}
+              <span *ngIf="getPolicyStatus(purchase) === 'ACTIVE'" class="badge bg-success ms-2">Active</span>
+              <span *ngIf="getPolicyStatus(purchase) === 'EXPIRED'" class="badge bg-danger ms-2">Expired</span>
+              <span *ngIf="getPolicyStatus(purchase) === 'CANCELLED'" class="badge bg-secondary ms-2">Cancelled</span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" 
+                        (click)="renewPurchase(purchase)" 
+                        [disabled]="isLoading || !canRenew(purchase)"
+                        [title]="!canRenew(purchase) ? 'Cannot renew expired policy' : 'Renew policy'">
+                  <i class="fas fa-sync-alt"></i> Renew
+                </button>
+                <button class="btn btn-sm btn-outline-danger" 
+                        (click)="cancelPurchase(purchase.purchaseId)" 
+                        [disabled]="isLoading || !canCancel(purchase)"
+                        [title]="!canCancel(purchase) ? 'Cannot cancel expired policy' : 'Cancel policy'">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
